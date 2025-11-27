@@ -1,0 +1,461 @@
+basePath: /
+definitions:
+  server.jobData:
+    properties:
+      adults:
+        type: integer
+      checkInDate:
+        type: string
+      checkOutDate:
+        type: string
+      location:
+        type: string
+      starRating:
+        type: string
+      websites:
+        items:
+          $ref: '#/definitions/server.websiteData'
+        type: array
+    type: object
+  server.loginRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  server.saveMultiFormRequest:
+    properties:
+      action:
+        enum:
+        - start
+        - save
+        - schedule
+        example: start
+        type: string
+      jobs:
+        items:
+          $ref: '#/definitions/server.jobData'
+        type: array
+      scheduleTs:
+        description: YYYYMMDDHHMI format for IST timezone
+        example: "202509181400"
+        type: string
+      userId:
+        example: user@example.com
+        type: string
+    required:
+    - jobs
+    - userId
+    type: object
+  server.signupRequest:
+    properties:
+      city:
+        example: Mumbai
+        type: string
+      country:
+        example: India
+        type: string
+      email:
+        example: user@example.com
+        type: string
+      mobile_number:
+        example: +91-9876543210
+        type: string
+      name:
+        example: John Doe
+        type: string
+      password:
+        example: password123
+        type: string
+      state:
+        example: Maharashtra
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  server.simpleResponse:
+    properties:
+      message:
+        example: Operation successful
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  server.verifyEmailRequest:
+    properties:
+      code:
+        example: "123456"
+        type: string
+      email:
+        example: user@example.com
+        type: string
+    required:
+    - code
+    - email
+    type: object
+  server.websiteData:
+    properties:
+      name:
+        type: string
+      pos:
+        items:
+          type: string
+        type: array
+    type: object
+host: localhost:5001
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Type "Bearer" followed by a space and JWT token.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Front Insight API
+  version: "1.0"
+paths:
+  /contact-query:
+    post:
+      consumes:
+      - application/json
+      description: Submit a customer contact query or support request
+      parameters:
+      - description: Contact query data
+        in: body
+        name: request
+        required: true
+        schema:
+          allOf:
+          - type: object
+          - properties:
+              email:
+                type: string
+              message:
+                type: string
+              name:
+                type: string
+            type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Query submitted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Submit contact query
+      tags:
+      - Contact
+  /health:
+    get:
+      description: Check the health status of the API and its dependencies
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Health status
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Health check
+      tags:
+      - System
+  /locations:
+    get:
+      description: Retrieve a list of all available locations
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of locations
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all locations
+      tags:
+      - Reference Data
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.simpleResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/server.simpleResponse'
+      summary: User login
+      tags:
+      - Authentication
+  /my-collections:
+    get:
+      description: Retrieve all collections for a specific user with optional filtering
+      parameters:
+      - description: User ID (email)
+        in: query
+        name: userId
+        required: true
+        type: string
+      - description: Filter by location
+        in: query
+        name: location
+        type: string
+      - description: Filter by website
+        in: query
+        name: website
+        type: string
+      - description: Check-in start date (YYYY-MM-DD)
+        in: query
+        name: checkInStart
+        type: string
+      - description: Check-in end date (YYYY-MM-DD)
+        in: query
+        name: checkInEnd
+        type: string
+      - description: Check-out start date (YYYY-MM-DD)
+        in: query
+        name: checkOutStart
+        type: string
+      - description: Check-out end date (YYYY-MM-DD)
+        in: query
+        name: checkOutEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of collections
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user's collections
+      tags:
+      - Collections
+  /my-searches:
+    get:
+      description: Retrieve all searches for a specific user with optional filtering
+      parameters:
+      - description: User ID (email)
+        in: query
+        name: userId
+        required: true
+        type: string
+      - description: Filter by scheduled status (true/false)
+        in: query
+        name: scheduled
+        type: string
+      - description: Filter by location
+        in: query
+        name: location
+        type: string
+      - description: Filter by website
+        in: query
+        name: website
+        type: string
+      - description: Check-in start date (YYYY-MM-DD)
+        in: query
+        name: checkInStart
+        type: string
+      - description: Check-in end date (YYYY-MM-DD)
+        in: query
+        name: checkInEnd
+        type: string
+      - description: Check-out start date (YYYY-MM-DD)
+        in: query
+        name: checkOutStart
+        type: string
+      - description: Check-out end date (YYYY-MM-DD)
+        in: query
+        name: checkOutEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of searches
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user's searches
+      tags:
+      - Searches
+  /pos:
+    get:
+      description: Retrieve a list of all available POS (Point of Sale) systems
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of POS systems
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all POS systems
+      tags:
+      - Reference Data
+  /save-multi-form:
+    post:
+      consumes:
+      - application/json
+      description: Submit hotel search jobs with options to start immediately, save
+        as collection, or schedule for later
+      parameters:
+      - description: Search job data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server.saveMultiFormRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Job submitted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Submit search jobs
+      tags:
+      - Searches
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account with email verification
+      parameters:
+      - description: User registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server.signupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.simpleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.simpleResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.simpleResponse'
+      summary: Register a new user
+      tags:
+      - Authentication
+  /sites:
+    get:
+      description: Retrieve a list of all available booking sites
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of sites
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all sites
+      tags:
+      - Reference Data
+  /verify-email:
+    post:
+      consumes:
+      - application/json
+      description: Verify user email with the verification code sent during signup
+      parameters:
+      - description: Email verification data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/server.verifyEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.simpleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/server.simpleResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/server.simpleResponse'
+      summary: Verify user email
+      tags:
+      - Authentication
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

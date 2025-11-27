@@ -1,0 +1,684 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Type \"Bearer\" followed by a space and JWT token.",
+        "title": "Front Insight API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:5001",
+    "basePath": "/",
+    "paths": {
+        "/contact-query": {
+            "post": {
+                "description": "Submit a customer contact query or support request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Submit contact query",
+                "parameters": [
+                    {
+                        "description": "Contact query data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "type": "object"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "email": {
+                                            "type": "string"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Query submitted successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "Check the health status of the API and its dependencies",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "Health status",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/locations": {
+            "get": {
+                "description": "Retrieve a list of all available locations",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reference Data"
+                ],
+                "summary": "Get all locations",
+                "responses": {
+                    "200": {
+                        "description": "List of locations",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Authenticate user and return JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/server.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/server.simpleResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/server.simpleResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/my-collections": {
+            "get": {
+                "description": "Retrieve all collections for a specific user with optional filtering",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Collections"
+                ],
+                "summary": "Get user's collections",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID (email)",
+                        "name": "userId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by location",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by website",
+                        "name": "website",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Check-in start date (YYYY-MM-DD)",
+                        "name": "checkInStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Check-in end date (YYYY-MM-DD)",
+                        "name": "checkInEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Check-out start date (YYYY-MM-DD)",
+                        "name": "checkOutStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Check-out end date (YYYY-MM-DD)",
+                        "name": "checkOutEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of collections",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/my-searches": {
+            "get": {
+                "description": "Retrieve all searches for a specific user with optional filtering",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Searches"
+                ],
+                "summary": "Get user's searches",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID (email)",
+                        "name": "userId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by scheduled status (true/false)",
+                        "name": "scheduled",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by location",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by website",
+                        "name": "website",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Check-in start date (YYYY-MM-DD)",
+                        "name": "checkInStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Check-in end date (YYYY-MM-DD)",
+                        "name": "checkInEnd",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Check-out start date (YYYY-MM-DD)",
+                        "name": "checkOutStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Check-out end date (YYYY-MM-DD)",
+                        "name": "checkOutEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of searches",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/pos": {
+            "get": {
+                "description": "Retrieve a list of all available POS (Point of Sale) systems",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reference Data"
+                ],
+                "summary": "Get all POS systems",
+                "responses": {
+                    "200": {
+                        "description": "List of POS systems",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/save-multi-form": {
+            "post": {
+                "description": "Submit hotel search jobs with options to start immediately, save as collection, or schedule for later",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Searches"
+                ],
+                "summary": "Submit search jobs",
+                "parameters": [
+                    {
+                        "description": "Search job data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/server.saveMultiFormRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Job submitted successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "description": "Create a new user account with email verification",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User registration data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/server.signupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/server.simpleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/server.simpleResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.simpleResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/sites": {
+            "get": {
+                "description": "Retrieve a list of all available booking sites",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reference Data"
+                ],
+                "summary": "Get all sites",
+                "responses": {
+                    "200": {
+                        "description": "List of sites",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/verify-email": {
+            "post": {
+                "description": "Verify user email with the verification code sent during signup",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify user email",
+                "parameters": [
+                    {
+                        "description": "Email verification data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/server.verifyEmailRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/server.simpleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/server.simpleResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/server.simpleResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "server.jobData": {
+            "type": "object",
+            "properties": {
+                "adults": {
+                    "type": "integer"
+                },
+                "checkInDate": {
+                    "type": "string"
+                },
+                "checkOutDate": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "starRating": {
+                    "type": "string"
+                },
+                "websites": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/server.websiteData"
+                    }
+                }
+            }
+        },
+        "server.loginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                }
+            }
+        },
+        "server.saveMultiFormRequest": {
+            "type": "object",
+            "required": [
+                "jobs",
+                "userId"
+            ],
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "start",
+                        "save",
+                        "schedule"
+                    ],
+                    "example": "start"
+                },
+                "jobs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/server.jobData"
+                    }
+                },
+                "scheduleTs": {
+                    "description": "YYYYMMDDHHMI format for IST timezone",
+                    "type": "string",
+                    "example": "202509181400"
+                },
+                "userId": {
+                    "type": "string",
+                    "example": "user@example.com"
+                }
+            }
+        },
+        "server.signupRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "example": "Mumbai"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "India"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "mobile_number": {
+                    "type": "string",
+                    "example": "+91-9876543210"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "state": {
+                    "type": "string",
+                    "example": "Maharashtra"
+                }
+            }
+        },
+        "server.simpleResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "server.verifyEmailRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "email"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "123456"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                }
+            }
+        },
+        "server.websiteData": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "pos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
