@@ -129,20 +129,20 @@ func getenvInt(key string, def int) int {
 	return def
 }
 
-func defaultPgURL() string {
-	user := getenv("POSTGRES_USER", "postgres_user")
-	pass := getenv("POSTGRES_PASSWORD", "postgres_pass")
-	host := getenv("POSTGRES_HOST", "localhost")
-	port := getenv("POSTGRES_PORT", "5432")
-	db := getenv("POSTGRES_DB", "postgres")
-	return "postgresql://" + user + ":" + pass + "@" + host + ":" + port + "/" + db
-}
-
 // func defaultPgURL() string {
-// 	user := getenv("POSTGRES_USER", "postgres")
-// 	pass := getenv("POSTGRES_PASSWORD", "dank!f0r3st")
-// 	host := getenv("POSTGRES_HOST", "10.0.3.230")
+// 	user := getenv("POSTGRES_USER", "postgres_user")
+// 	pass := getenv("POSTGRES_PASSWORD", "postgres_pass")
+// 	host := getenv("POSTGRES_HOST", "localhost")
 // 	port := getenv("POSTGRES_PORT", "5432")
 // 	db := getenv("POSTGRES_DB", "postgres")
 // 	return "postgresql://" + user + ":" + pass + "@" + host + ":" + port + "/" + db
 // }
+
+func defaultPgURL() string {
+	user := getenv("POSTGRES_USER", "postgres")
+	pass := getenv("POSTGRES_PASSWORD", "dank!f0r3st")
+	host := getenv("POSTGRES_HOST", "10.0.3.230")
+	port := getenv("POSTGRES_PORT", "5432")
+	db := getenv("POSTGRES_DB", "postgres")
+	return "postgresql://" + user + ":" + pass + "@" + host + ":" + port + "/" + db
+}
